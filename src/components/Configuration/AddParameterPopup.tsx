@@ -6,9 +6,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onAdd: (data: any) => void;
+  editData?: any | null;
 }
 
-const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
+const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd, editData }: Props) => {
   const [name, setName] = useState("");
   const [dataType, setDataType] = useState("");
   const [minValue, setMinValue] = useState("");
@@ -22,6 +23,12 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
   const [integerValue, setIntegerValue] = useState("");
   const [integerError, setIntegerError] = useState(false);
 
+  const [dropdownValue, setDropdownValue] = useState("");
+  const [textValue, setTextValue] = useState("");
+const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+const [percentage, setPercentage] = useState("");
+const [integerValue, setIntegerValue] = useState("");
+
   useEffect(() => {
     if (open) {
       setName("");
@@ -33,8 +40,31 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       setSelectedOptions([]);
       setPercentage("");
       setIntegerValue("");
+      if (editData) {
+        // Pre-populate with edit data
+        setName(editData.name || "");
+        setDataType(editData.dataType || "");
+        setMinValue(editData.minValue || "");
+        setMaxValue(editData.maxValue || "");
+        setDropdownValue(editData.dropdownValue || "");
+        setTextValue(editData.textValue || "");
+        setSelectedOptions(editData.selectedOptions || []);
+        setPercentage(editData.percentage || "");
+        setIntegerValue(editData.integerValue || "");
+      } else {
+        // Reset for new parameter
+        setName("");
+        setDataType("");
+        setMinValue("");
+        setMaxValue("");
+        setDropdownValue("");
+        setTextValue("");
+        setSelectedOptions([]);
+        setPercentage("");
+        setIntegerValue("");
+      }
     }
-  }, [open]);
+  }, [open, editData]);
 
   const handleAdd = () => {
     onAdd({ name, dataType, minValue, maxValue, dropdownValue, textValue, selectedOptions, percentage, integerValue });
@@ -66,6 +96,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         }}
       >
         Add Parameter
+        {editData ? "Edit Parameter" : "Add Parameter"}
         <IconButton onClick={onClose} sx={{ width: "28px", height: "28px" }}>
           <CloseIcon sx={{ fontSize: "18px", color: "#7A7A7A" }} />
         </IconButton>
@@ -83,6 +114,11 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
           sx={{
              width: "380px", 
       "& .MuiInputLabel-root.Mui-focused": {
+          onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          sx={{
+             width: "380px", 
+          "& .MuiInputLabel-root.Mui-focused": {
         color: "#232323 !important", 
       },
       
@@ -91,6 +127,8 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       },
       
       "& .MuiOutlinedInput-root": { 
+      "& .MuiOutlinedInput-root": {
+        
         height: "50px", 
         paddingTop: "0", 
         paddingBottom: "0",
@@ -103,6 +141,10 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         },
         "&.Mui-focused fieldset": {
           borderColor: "#CFD1D4 !important",
+          borderColor: "#CFD1D4", 
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "#CFD1D4 !important", 
         },
       },
     }}
@@ -119,6 +161,13 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
           InputLabelProps={{ shrink: true }}
           sx={{
              width: "380px", 
+          onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setDataType(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          sx={{
+             width: "380px", 
+     
+      
+      
       "& .MuiInputLabel-root.Mui-focused": {
         color: "#232323 !important", 
       },
@@ -156,6 +205,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         {/* Decimal → show Min & Max */}
         {dataType === "Decimal" && (
           <Box sx={{ display: "flex", gap: "16px" }}>
+          <Box sx={{ display: "flex", gap: "16px", justifyContent: "space-between" }}>
   {/* Min °C TextField */}
   <TextField
     label="Min °C"
@@ -187,6 +237,20 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         color: "#5F646F", 
         padding: "10px 10px",
       },
+    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setMinValue(e.target.value)}
+    InputLabelProps={{ shrink: true }}
+    sx={{
+      width: "182px",
+      "& .MuiInputLabel-root": { color: "#5F646F !important" },
+      "& .MuiInputLabel-root.Mui-focused": { color: "#5F646F !important" },
+      "& .MuiOutlinedInput-root": {
+        height: "50px",
+        borderRadius: "10px",
+        "& fieldset": { borderColor: "#CFD1D4", borderWidth: "1px" },
+        "&:hover fieldset": { borderColor: "#CFD1D4" },
+        "&.Mui-focused fieldset": { borderColor: "#CFD1D4" },
+      },
+      "& .MuiInputBase-input": { color: "#5F646F", padding: "10px 10px" },
     }}
   />
 
@@ -196,6 +260,10 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
     size="small"
     value={maxValue}
     onChange={(e) => setMaxValue(e.target.value)}
+    
+    size="small"
+    value={maxValue}
+    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setMaxValue(e.target.value)}
     InputLabelProps={{ shrink: true }}
     sx={{
       width: "182px",
@@ -210,6 +278,13 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         "& fieldset": { 
           borderColor: "#CFD1D4", 
           borderWidth: "1px", 
+       
+        height: "50px", 
+        borderRadius: "10px",
+        
+        "& fieldset": { 
+          borderColor: "#CFD1D4", 
+          borderWidth: "1px",
         },
         "&:hover fieldset": { borderColor: "#CFD1D4" },
         "&.Mui-focused fieldset": { borderColor: "#CFD1D4" },
@@ -217,6 +292,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       
       "& .MuiInputBase-input": { 
         color: "#5F646F", 
+        // --- 3. 
         padding: "10px 16px",
       },
     }}
@@ -229,6 +305,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
   <Box sx={{ display: "flex", flexDirection: "row", gap: 3, ml: 1 }}>
     {["Option 1", "Option 2", "Option 3"].map((opt) => (
       <FormControlLabel
+        <FormControlLabel
         key={opt}
         control={
           <Checkbox
@@ -239,6 +316,11 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
                 setSelectedOptions([...selectedOptions, opt]);
               } else {
                 setSelectedOptions(selectedOptions.filter((o) => o !== opt));
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (e.target.checked) {
+                setSelectedOptions([...selectedOptions, opt]);
+              } else {
+                setSelectedOptions(selectedOptions.filter((o: string) => o !== opt));
               }
             }}
             sx={{
@@ -262,6 +344,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         },
         "&.Mui-focused fieldset": {
           borderColor: "#CFD1D4 !important",
+          borderColor: "#CFD1D4 !important", 
         },
       },
     }}
@@ -287,6 +370,11 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
     InputLabelProps={{ shrink: true }}
     sx={{
    
+
+    value={dropdownValue}
+    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setDropdownValue(e.target.value)}
+    InputLabelProps={{ shrink: true }}
+    sx={{
       width: "380px", 
       "& .MuiInputLabel-root.Mui-focused": {
         color: "#232323 !important", 
@@ -299,17 +387,20 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       "& .MuiOutlinedInput-root": {
         
         height: "50px", 
+        height: "50px",
         paddingTop: "0", 
         paddingBottom: "0",
 
         "& fieldset": {
           borderColor: "#CFD1D4",
+          borderColor: "#CFD1D4", 
         },
         "&:hover fieldset": {
           borderColor: "#CFD1D4", 
         },
         "&.Mui-focused fieldset": {
           borderColor: "#CFD1D4 !important", 
+          borderColor: "#CFD1D4 !important",
         },
       },
     }}
@@ -334,6 +425,11 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       sx={{
         width: "380px",
       
+      onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setTextValue(e.target.value)}
+      fullWidth
+      InputLabelProps={{ shrink: true }}
+      sx={{
+        width: "380px", 
         "& .MuiInputLabel-root.Mui-focused": {
         color: "#232323 !important", 
       },
@@ -344,6 +440,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
               
         "& .MuiOutlinedInput-root": {
           height: "50px", 
+          height: "50px",
           borderRadius: "10px",
 
           "& fieldset": {
@@ -356,6 +453,8 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
       
           "&.Mui-focused fieldset": {
             borderColor: "#CFD1D4 !important", 
+          "&.Mui-focused fieldset": {
+            borderColor: "#CFD1D4 !important",
           },
         },
 
@@ -403,6 +502,26 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         },
       },
     }}
+    <TextField
+      label="Percentage"
+      value={percentage}
+      onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setPercentage(e.target.value)}
+      fullWidth
+      InputLabelProps={{ shrink: true }}
+      sx={{
+        width: "380px",
+        "& .MuiInputLabel-root.Mui-focused": { color: "#232323 !important" },
+        "& .MuiInputLabel-root": { color: "#5F646F !important" },
+        "& .MuiOutlinedInput-root": {
+          height: "50px",
+          paddingTop: "0",
+          paddingBottom: "0",
+          "& fieldset": { borderColor: "#CFD1D4", borderWidth: "1px" },
+          "&:hover fieldset": { borderColor: "#CFD1D4" },
+          "&.Mui-focused fieldset": { borderColor: "#CFD1D4 !important" },
+        },
+        "& .MuiInputBase-input": { color: "#5F646F", padding: "10px 16px" },
+      }}
     />
   </Box>
 )}
@@ -429,6 +548,14 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
         "& .MuiInputLabel-root": {
           color: "#5F646F !important",
         },
+      value={integerValue}
+      onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setIntegerValue(e.target.value)}
+      fullWidth
+      InputLabelProps={{ shrink: true }}
+      sx={{
+        width: "380px",
+        "& .MuiInputLabel-root.Mui-focused": { color: "#232323 !important" },
+        "& .MuiInputLabel-root": { color: "#5F646F !important" },
         "& .MuiOutlinedInput-root": {
           height: "50px",
           paddingTop: "0",
@@ -442,6 +569,9 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
           "&.Mui-focused fieldset": {
             borderColor: "#CFD1D4 !important",
           },
+          "& fieldset": { borderColor: "#CFD1D4" },
+          "&:hover fieldset": { borderColor: "#CFD1D4" },
+          "&.Mui-focused fieldset": { borderColor: "#CFD1D4 !important" },
         },
       }}
     />
@@ -452,6 +582,10 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
 
     {/* Buttons */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mr: 2 }}>
+
+
+    {/* Buttons */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
           <Button
             variant="outlined"
             onClick={onClose}
@@ -481,6 +615,7 @@ const AddParameterPopup: React.FC<Props> = ({ open, onClose, onAdd }) => {
             }}
           >
             Add
+            {editData ? "Update" : "Add"}
           </Button>
         </Box>
       </DialogContent>
