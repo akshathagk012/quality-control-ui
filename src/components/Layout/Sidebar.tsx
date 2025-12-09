@@ -9,6 +9,7 @@ import ClinicLogo from "../../assets/icons/Clinic-Logo.svg";
 import VidaiLogo from "../../assets/icons/Vidai-logo.svg";
 import UpdatedVersionIcon from "../../assets/icons/Updated_Version.svg";
 import DashboardCardBg from "../../assets/icons/dashboard_card_bg.svg";
+import SubtractBg from "../../assets/icons/Subtract.svg";
 
 import {
   Drawer,
@@ -17,9 +18,7 @@ import {
   ListItemButton,
   ListItemText,
   Box,
-  Card,
   Typography,
-  Divider,
   IconButton,
 } from '@mui/material';
 
@@ -59,16 +58,12 @@ const Sidebar = () => {
   const location = useLocation();
   const { currentView } = useView();
 
-  // ✏️ ADDED: State to track which icon is selected (0, 1, 2, or 3)
   const [selectedIcon, setSelectedIcon] = useState(0);
 
   const menuItems = getMenuItems(currentView);
 
-  // ✏️ ADDED: Function to handle icon clicks
   const handleIconClick = (iconIndex: number) => {
     setSelectedIcon(iconIndex);
-    // You can add navigation logic here if each icon should navigate somewhere
-    // For example: navigate('/some-path');
   };
 
   return (
@@ -90,7 +85,7 @@ const Sidebar = () => {
         },
       }}
     >
-      {/* Logo at Top (replaced with Clinic Logo) */}
+      {/* Logo at Top */}
       <Box sx={{ p: 2, pb: 1.5, display: 'flex', alignItems: 'center' }}>
         <img
           src={ClinicLogo}
@@ -106,141 +101,235 @@ const Sidebar = () => {
         />
       </Box>
 
-      {/* ✏️ MODIFIED: Icon Row - Now with clickable selection behavior */}
-      <Card
-          sx={{
-    p: 1,
-    //mx: 1,
-    ml:1,
-    mr:1,
-    mt: 1,
-    mb: 1,
-    borderRadius: 2,
-    // match header background
-    backgroundColor: '#FFFFFF',
-    // requested box-shadow
-    boxShadow: '0px 0px 14px 0px #0000000F',
-    position: 'relative',
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    height: 56,
-    minHeight: 50,
-    flexShrink: 0,
-    overflow: "hidden",
-    opacity: 1,
-  }}
+      {/* Icon Row using Subtract SVG as the card */}
+      <Box
+        sx={{
+          position: 'relative',
+          width: 'calc(100% - 16px)',
+          maxWidth: 282,
+          height: 56,
+          ml: 1,
+          mr: 1,
+          mt: 1,
+          mb: 1,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
       >
         <Box
+          component="img"
+          src={SubtractBg}
+          alt="card background"
           sx={{
-            position: 'relative',
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            width: "100%",
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'fill',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+        />
+
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
             pl: 1.5,
             pr: 1,
             gap: 1.5,
           }}
         >
-          {/* ✏️ MODIFIED: Icon 1 - Shield with checkmark */}
-          <IconButton
-            size="small"
-            onClick={() => handleIconClick(0)}
+          {/* Icon 1 - Shield with checkmark (Positioned in curved area) */}
+          <Box
             sx={{
-              p: 0.5,
               position: 'relative',
-              width: 40,
-              height: 40,
-              backgroundColor: 'transparent',
-              color: selectedIcon === 0 ? '#E17E61' : '#6b7280',
-              borderRadius: 0,
-              border: 'none',
-              boxShadow: 'none',
-              transition: 'none',
-              '&:hover': { backgroundColor: 'transparent' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: selectedIcon === 0 ? 1 : 0,
+              ml: selectedIcon === 0 ? 1.7 : 0,
+              transition: 'margin-top 120ms ease',
             }}
           >
-            <img
-              src={TickmarkCircle}
-              alt="tick mark"
-              style={{
-                width: 36,
-                height: 36,
-                objectFit: 'contain',
-                display: 'block',
-                opacity: 1,
-                transform: 'none',
+            <IconButton
+              size="small"
+              onClick={() => handleIconClick(0)}
+              sx={{
+                p: 0.5,
+                position: 'relative',
+                zIndex: 1,
+                width: selectedIcon === 0 ? 36 : 40,
+                height: selectedIcon === 0 ? 36 : 40,
+                backgroundColor: 'transparent',
+                color: selectedIcon === 0 ? '#E17E61' : '#6b7280',
+                borderRadius: '50%',
+                border: 'none',
+                boxShadow: 'none',
+                transition: 'width 120ms ease, height 120ms ease, color 120ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': { backgroundColor: 'transparent' },
               }}
-            />
-          </IconButton>
+            >
+              <img
+                src={TickmarkCircle}
+                alt="tick mark"
+                style={{
+                  width: selectedIcon === 0 ? 36 : 24,
+                  height: selectedIcon === 0 ? 36 : 24,
+                  objectFit: 'contain',
+                  transition: 'width 120ms ease, height 120ms ease',
+                }}
+              />
+            </IconButton>
+          </Box>
 
-          {/* ✏️ MODIFIED: Icon 2 - Work/Briefcase */}
-          <IconButton
-            size="small"
-            onClick={() => handleIconClick(1)}
+          {/* Icon 2 - Work/Briefcase */}
+          <Box
             sx={{
-              p: 0.5,
               position: 'relative',
-              width: 40,
-              height: 40,
-              backgroundColor: 'transparent',
-              color: selectedIcon === 1 ? '#E17E61' : '#6b7280',
-              borderRadius: 0,
-              border: 'none',
-              boxShadow: 'none',
-              transition: 'none',
-              '&:hover': { backgroundColor: 'transparent' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: selectedIcon === 1 ? -1.5 : 0,
+              transition: 'margin-top 120ms ease',
             }}
           >
-            <img src={BriefcaseIcon} alt="briefcase" style={{ width: 20, height: 20, objectFit: 'contain', opacity: 1 }} />
-          </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => handleIconClick(1)}
+              sx={{
+                p: 0.5,
+                position: 'relative',
+                zIndex: 1,
+                width: selectedIcon === 1 ? 48 : 40,
+                height: selectedIcon === 1 ? 48 : 40,
+                backgroundColor: 'transparent',
+                color: selectedIcon === 1 ? '#E17E61' : '#6b7280',
+                borderRadius: '50%',
+                border: 'none',
+                boxShadow: 'none',
+                transition: 'width 120ms ease, height 120ms ease, color 120ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': { backgroundColor: 'transparent' },
+              }}
+            >
+              <img
+                src={BriefcaseIcon}
+                alt="briefcase"
+                style={{
+                  width: selectedIcon === 1 ? 28 : 20,
+                  height: selectedIcon === 1 ? 28 : 20,
+                  objectFit: 'contain',
+                  transition: 'width 120ms ease, height 120ms ease',
+                }}
+              />
+            </IconButton>
+          </Box>
 
-          {/* ✏️ MODIFIED: Icon 3 - Security Safe */}
-          <IconButton
-            size="small"
-            onClick={() => handleIconClick(2)}
+          {/* Icon 3 - Security Safe */}
+          <Box
             sx={{
-              p: 0.5,
               position: 'relative',
-              width: 40,
-              height: 40,
-              backgroundColor: 'transparent',
-              color: selectedIcon === 2 ? '#E17E61' : '#6b7280',
-              borderRadius: 0,
-              border: 'none',
-              boxShadow: 'none',
-              transition: 'none',
-              '&:hover': { backgroundColor: 'transparent' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: selectedIcon === 2 ? -1.5 : 0,
+              transition: 'margin-top 120ms ease',
             }}
           >
-            <img src={SecuritySafe} alt="security safe" style={{ width: 20, height: 20, objectFit: 'contain', opacity: 1 }} />
-          </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => handleIconClick(2)}
+              sx={{
+                p: 0.5,
+                position: 'relative',
+                zIndex: 1,
+                width: selectedIcon === 2 ? 48 : 40,
+                height: selectedIcon === 2 ? 48 : 40,
+                backgroundColor: 'transparent',
+                color: selectedIcon === 2 ? '#E17E61' : '#6b7280',
+                borderRadius: '50%',
+                border: 'none',
+                boxShadow: 'none',
+                transition: 'width 120ms ease, height 120ms ease, color 120ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': { backgroundColor: 'transparent' },
+              }}
+            >
+              <img
+                src={SecuritySafe}
+                alt="security safe"
+                style={{
+                  width: selectedIcon === 2 ? 28 : 20,
+                  height: selectedIcon === 2 ? 28 : 20,
+                  objectFit: 'contain',
+                  transition: 'width 120ms ease, height 120ms ease',
+                }}
+              />
+            </IconButton>
+          </Box>
 
-          {/* ✏️ MODIFIED: Icon 4 - Description/Document */}
-          <IconButton
-            size="small"
-            onClick={() => handleIconClick(3)}
+          {/* Icon 4 - Description/Document */}
+          <Box
             sx={{
-              p: 0.5,
               position: 'relative',
-              width: 40,
-              height: 40,
-              backgroundColor: 'transparent',
-              color: selectedIcon === 3 ? '#E17E61' : '#6b7280',
-              borderRadius: 0,
-              border: 'none',
-              boxShadow: 'none',
-              transition: 'none',
-              '&:hover': { backgroundColor: 'transparent' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mt: selectedIcon === 3 ? -1.5 : 0,
+              transition: 'margin-top 120ms ease',
             }}
           >
-            <img src={ReceiptSearch} alt="receipt search" style={{ width: 20, height: 20, objectFit: 'contain', opacity: 1 }} />
-          </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => handleIconClick(3)}
+              sx={{
+                p: 0.5,
+                position: 'relative',
+                zIndex: 1,
+                width: selectedIcon === 3 ? 48 : 40,
+                height: selectedIcon === 3 ? 48 : 40,
+                backgroundColor: 'transparent',
+                color: selectedIcon === 3 ? '#E17E61' : '#6b7280',
+                borderRadius: '50%',
+                border: 'none',
+                boxShadow: 'none',
+                transition: 'width 120ms ease, height 120ms ease, color 120ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': { backgroundColor: 'transparent' },
+              }}
+            >
+              <img
+                src={ReceiptSearch}
+                alt="receipt search"
+                style={{
+                  width: selectedIcon === 3 ? 28 : 20,
+                  height: selectedIcon === 3 ? 28 : 20,
+                  objectFit: 'contain',
+                  transition: 'width 120ms ease, height 120ms ease',
+                }}
+              />
+            </IconButton>
+          </Box>
         </Box>
-      </Card>
+      </Box>
 
-      {/* Quality Control Heading */}
+      {/* Quality Control Heading and Menu Container */}
       <Box sx={{ pr: 5}}>
       <div>
         <Box sx={{
@@ -254,7 +343,6 @@ const Sidebar = () => {
           ml:2,
           mb:2, 
           borderRadius: '20px',
-          // Use transparent border with gradient source for border-image
           border: 'none',
           boxShadow: '0px 0px 14px 0px #0000000F',
           p: 3,
@@ -268,7 +356,7 @@ const Sidebar = () => {
             <Box sx={{ px: 0, pt: 0, pb: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-start', pl: 0, ml: -1.5 }}>
     
-    {/* Logo Circle (bigger & centered like your screenshot) */}
+    {/* Logo Circle for Quality Control */}
 <Box
   sx={{
     width: 32,
@@ -287,14 +375,12 @@ const Sidebar = () => {
       width: "28px",
       height: "28px",
       objectFit: "contain",
-      
-
     }}
   />
 </Box>
 
 
-    {/* Title in single horizontal line */}
+    {/* Quality Control Title */}
     <Typography
       sx={{
         transform: 'none',
@@ -322,7 +408,7 @@ const Sidebar = () => {
   </Box>
 </Box>
 
-          {/* Navigation Menu - Simple text, active in black */}
+          {/* Navigation Menu */}
           <List sx={{ pt: 0, flex: 1, px: 5 }}>
             {menuItems.map((item) => {
               const isActive =
