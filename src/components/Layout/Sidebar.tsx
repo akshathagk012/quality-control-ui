@@ -24,7 +24,17 @@ import {
 
 import { useView } from '@/utils/viewContext';
 
-const drawerWidth = 240;
+// Responsive drawer width
+const getDrawerWidth = () => {
+  if (typeof window !== 'undefined') {
+    if (window.innerWidth < 600) return 200; // xs
+    if (window.innerWidth < 900) return 220; // sm
+    return 240; // md and up
+  }
+  return 240;
+};
+
+const drawerWidth = getDrawerWidth();
 
 const getMenuItems = (view: 'technician' | 'admin' | 'user') => {
   switch (view) {
@@ -70,10 +80,10 @@ const Sidebar = () => {
     <Drawer
       variant="permanent"
       sx={{
-        width: drawerWidth,
+        width: { xs: 200, sm: 220, md: drawerWidth },
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: drawerWidth,
+          width: { xs: 200, sm: 220, md: drawerWidth },
           boxSizing: 'border-box',
          backgroundColor: '#FAFAFA',
           display: 'flex',
@@ -86,13 +96,14 @@ const Sidebar = () => {
       }}
     >
       {/* Logo at Top */}
-      <Box sx={{ p: 2, pb: 1.5, display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2 }, pb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <img
           src={ClinicLogo}
           alt="Clinic Logo"
           style={{
-            width: 134,
-            height: 46,
+            width: '80%',
+            maxWidth: 134,
+            height: 'auto',
             transform: 'rotate(0deg)',
             opacity: 1,
             objectFit: 'contain',
@@ -106,7 +117,7 @@ const Sidebar = () => {
         sx={{
           position: 'relative',
           width: 'calc(100% - 16px)',
-          maxWidth: 282,
+          maxWidth: { xs: 250, sm: 270, md: 282 },
           height: 56,
           ml: 1,
           mr: 1,
@@ -330,22 +341,23 @@ const Sidebar = () => {
       </Box>
 
       {/* Quality Control Heading and Menu Container */}
-      <Box sx={{ pr: 5}}>
+      <Box sx={{ pr: { xs: 4, sm: 4.5, md: 5 } }}>
       <div>
         <Box sx={{
-          maxWidth: 282,
+          maxWidth: { xs: 250, sm: 270, md: 282 },
           width: "105%",
-          height: 520,
+          height: { xs: 'auto', sm: 450, md: 520 },
+          maxHeight: { xs: 'calc(100vh - 250px)', sm: 'calc(100vh - 220px)' },
           backgroundColor: '#FFFFFF',
           position: 'relative',
           mt: 1,
-          mr:2,
-          ml:2,
-          mb:2, 
+          mr: 2,
+          ml: 2,
+          mb: 2, 
           borderRadius: '20px',
           border: 'none',
           boxShadow: '0px 0px 14px 0px #0000000F',
-          p: 3,
+          p: { xs: 2, sm: 2.5, md: 3 },
           pt: 1.5,
           display: 'flex',
           flexDirection: 'column',
@@ -388,7 +400,7 @@ const Sidebar = () => {
         fontFamily: 'Montserrat, sans-serif',
         fontWeight: 700,
         fontStyle: 'normal',
-        fontSize: '17px',
+        fontSize: { xs: '15px', sm: '16px', md: '17px' },
         lineHeight: '24px',
         letterSpacing: '0',
         color: '#E17E61',
@@ -409,7 +421,7 @@ const Sidebar = () => {
 </Box>
 
           {/* Navigation Menu */}
-          <List sx={{ pt: 0, flex: 1, px: 5 }}>
+          <List sx={{ pt: 0, flex: 1, px: { xs: 1.5, sm: 2 }, overflowY: 'auto' }}>
             {menuItems.map((item) => {
               const isActive =
                 location.pathname === item.path ||
@@ -420,12 +432,12 @@ const Sidebar = () => {
                   <ListItemButton
                     onClick={() => navigate(item.path)}
                     sx={{
-                      width: 194,
+                      width: { xs: '100%', sm: 194 },
                       height: 36,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'flex-start',
-                      px: 2,
+                      px: { xs: 1.5, sm: 2 },
                       py: '8px',
                       borderRadius: 1,
                       backgroundColor: 'transparent',
@@ -438,7 +450,7 @@ const Sidebar = () => {
                     <ListItemText
                       primary={item.text}
                       primaryTypographyProps={{
-                        fontSize: '16px',
+                        fontSize: { xs: '14px', sm: '15px', md: '16px' },
                         fontWeight: isActive ? 700 : 400,
                         color: isActive ? '#111827' : '#9ca3af',
                         letterSpacing: '-0.01em',
@@ -485,8 +497,9 @@ const Sidebar = () => {
                   src={VidaiLogo}
                   alt="VIDAI Logo"
                   style={{
-                    width: 163.00006103515625,
-                    height: 51.643035888671875,
+                    width: '80%',
+                    maxWidth: 163,
+                    height: 'auto',
                     transform: 'rotate(0deg)',
                     opacity: 1,
                     objectFit: 'contain',
@@ -497,23 +510,24 @@ const Sidebar = () => {
               <Box
                 sx={{
                   width: '100%',
-                  maxWidth: 190,
+                  maxWidth: { xs: 160, sm: 180, md: 190 },
                   height: 15,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-end',
-                  pl: 2,
+                  pl: { xs: 1.5, sm: 2 },
                   transform: 'rotate(0deg)',
                   opacity: 1,
                   borderRadius: 1,
-                  ml: '28px',
+                  ml: { xs: '20px', sm: '24px', md: '28px' },
                 }}
               >
                 <img
                   src={UpdatedVersionIcon}
                   alt="Updated Version 2.0"
                   style={{
-                    width: 124,
+                    width: '100%',
+                    maxWidth: 124,
                     height: 15,
                     transform: 'rotate(0deg)',
                     opacity: 1,
