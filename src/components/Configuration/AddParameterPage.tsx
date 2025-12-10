@@ -83,75 +83,101 @@ const AddParameterPage = () => {
     };
 
     const handleFinalSave = async () => {
-        try {
-            const clinicId = 1;
+      try {
+          const clinicId = 1;
 
-            // GET existing clinic
-            const res = await fetch(`http://127.0.0.1:8000/api/get_clinic/${clinicId}/`);
-            const existingClinic = await res.json();
+          // Fetch existing clinic
+          const res = await fetch(`http://127.0.0.1:8000/api/get_clinic/${clinicId}/`);
+          const existingClinic = await res.json();
 
-            // Add NEW equipment
-            const newEquipment = {
-                equipment_name: equipmentName,
-                equipment_details: equipmentTable.map((row) => ({
-                    equipment_num: `${equipmentName}-${row.equipmentNum}`,
-                    make: row.make,
-                    model: row.model,
-                    is_active: true,
-                })),
-                parameters: parameters.map((p) => ({
-                    parameter_name: p.name,
-                    is_active: true,
-                    content: {
-                    data_type: p.dataType,
-                    min_value: p.minValue,
-                    max_value: p.maxValue,
-                    },
-                })),
-            };
+          // Build new equipment object
+          const newEquipment = {
+              equipment_name: equipmentName,
+              equipment_details: equipmentTable.map((row) => ({
+                  equipment_num: `${equipmentName}-${row.equipmentNum}`,
+                  make: row.make,
+                  model: row.model,
+                  is_active: true,
+              })),
+              parameters: parameters.map((p) => ({
+                  parameter_name: p.name,
+                  is_active: true,
+                  content: {
+                      data_type: p.dataType,
+                      min_value: p.minValue,
+                      max_value: p.maxValue,
+                  },
+              })),
+          };
 
-            // updated clinic object
-            const updatedClinic = {
-                name: existingClinic.name, // clinic name only
-                department: existingClinic.department.map((dept: { equipments: any[]; name: string; is_active: any; }) => {
-                    // Clean equipment array (remove IDs)
-                    const cleanedEquipments = dept.equipments.map((eq) => ({
-                        equipment_name: eq.equipment_name,
-                        equipment_details: eq.equipment_details.map((d: { equipment_num: any; make: any; model: any; is_active: any; }) => ({
-                            equipment_num: d.equipment_num,
-                            make: d.make,
-                            model: d.model,
-                            is_active: d.is_active,
-                        })),
-                        parameters: eq.parameters.map((p: { parameter_name: any; is_active: any; content: any; }) => ({
-                            parameter_name: p.parameter_name,
-                            is_active: p.is_active,
-                            content: p.content,
-                        })),
-                    }));
+          // Clean existing departments (remove IDs)
+          const cleanedDepartments = existingClinic.department.map((dept: { equipments: any[]; name: any; is_active: any; }) => {
+              const cleanedEquipments = dept.equipments.map((eq) => ({
+                  equipment_name: eq.equipment_name,
+                  equipment_details: eq.equipment_details.map((d: { equipment_num: any; make: any; model: any; is_active: any; }) => ({
+                      equipment_num: d.equipment_num,
+                      make: d.make,
+                      model: d.model,
+                      is_active: d.is_active,
+                  })),
+                  parameters: eq.parameters.map((p: { parameter_name: any; is_active: any; content: any; }) => ({
+                      parameter_name: p.parameter_name,
+                      is_active: p.is_active,
+                      content: p.content,
+                  })),
+              }));
 
-                    return {
-                        name: dept.name,
-                        is_active: dept.is_active,
-                        equipments: [...cleanedEquipments, newEquipment],
-                    };
-                }),
-            };
+              return {
+                  name: dept.name,
+                  is_active: dept.is_active,
+                  equipments: cleanedEquipments,
+              };
+          });
 
-            // PUT updated clinic
-            const saveRes = await fetch(`http://127.0.0.1:8000/api/clinics/${clinicId}/`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedClinic),
-            });
+          // Add equipment to the correct department
+          const updatedDepartments = (() => {
+              const existingDept = cleanedDepartments.find(
+                  (d: { name: any; }) => d.name === department
+              );
 
-            if (!saveRes.ok) throw new Error("Failed to save clinic");
-            initializeMockData(clinicId); // Refresh mock data
-            navigate("/dashboard"); // On success, navigate
+              if (existingDept) {
+                  // Dept exists → add inside it
+                  existingDept.equipments.push(newEquipment);
+                  return cleanedDepartments;
+              }
 
-        } catch (error) {
-            console.error("Error while saving:", error);
-        }
+              // Dept does NOT exist → create new dept
+              return [
+                  ...cleanedDepartments,
+                  {
+                      name: department,
+                      is_active: true,
+                      equipments: [newEquipment],
+                  },
+              ];
+          })();
+
+          // Build final clinic object
+          const updatedClinic = {
+              name: existingClinic.name,
+              department: updatedDepartments,
+          };
+
+          // Save the updated clinic
+          const saveRes = await fetch(`http://127.0.0.1:8000/api/clinics/${clinicId}/`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(updatedClinic),
+          });
+
+          if (!saveRes.ok) throw new Error("Failed to save clinic");
+
+          initializeMockData(clinicId); // refresh mock
+          navigate("/configuration"); // redirect
+          
+      } catch (error) {
+          console.error("Error while saving:", error);
+      }
     };
 
     return (
