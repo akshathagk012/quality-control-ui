@@ -106,6 +106,10 @@ const AddParameterPage = () => {
                       data_type: p.dataType,
                       min_value: p.minValue,
                       max_value: p.maxValue,
+                      integer_value: p.integerValue,
+                      percentage: p.percentageValue,
+                      text: p.textValue,
+                      dropdown: p.dropdownValue || [],
                   },
               })),
           };
@@ -244,8 +248,44 @@ const AddParameterPage = () => {
                                 {/* Min - Max Display */}
                                 {(p.minValue || p.maxValue) && (
                                     <Typography sx={{ fontSize: "13px", fontWeight: 500, color: "#374151" }}>
-                                        Min {p.minValue} °C   –   Max {p.maxValue} °C
+                                        Min : <b>{p.minValue}</b> °C   –   Max : <b>{p.maxValue}</b> °C
                                     </Typography>
+                                )}
+                                {(p.integerValue || p.integer_value) && (
+                                    <Typography sx={{ fontSize: "13px", fontWeight: 500, color: "#374151" }}>
+                                        Integer : <b>{p.integerValue || p.integer_value}</b>
+                                    </Typography>
+                                )}
+                                {(p.percentageValue || p.percentage) && (
+                                    <Typography sx={{ fontSize: "13px", fontWeight: 500, color: "#374151" }}>
+                                        Parameter : <b>{p.percentageValue || p.percentage}</b>
+                                    </Typography>
+                                )}
+                                {(p.textValue || p.text) && (
+                                    <Typography sx={{ fontSize: "13px", fontWeight: 500, color: "#374151" }}>
+                                        Text : <b>{p.textValue || p.text}</b>
+                                    </Typography>
+                                )}
+                                {( (p.selectedOptions && p.selectedOptions.length > 0) || (p.dropdownValue) || (Array.isArray(p.dropdown) && p.dropdown.length > 0) ) && (
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mt: 0.5 }}>
+                                        <Typography sx={{ fontSize: "13px", fontWeight: 500, color: "#374151" }}>Selection :</Typography>
+                                        {/* selectedOptions (multi-select), dropdownValue (single or array), or dropdown (array) */}
+                                        {Array.isArray(p.selectedOptions) && p.selectedOptions.length > 0 ? (
+                                            p.selectedOptions.map((val: any, i: number) => (
+                                                <Chip key={`sel-${i}`} label={String(val)} size="small" sx={{ background: "#F3F4F6" }} />
+                                            ))
+                                        ) : Array.isArray(p.dropdownValue) && p.dropdownValue.length > 0 ? (
+                                            p.dropdownValue.map((val: any, i: number) => (
+                                                <Chip key={`ddv-${i}`} label={String(val)} size="small" sx={{ background: "#F3F4F6" }} />
+                                            ))
+                                        ) : Array.isArray(p.dropdown) && p.dropdown.length > 0 ? (
+                                            p.dropdown.map((val: any, i: number) => (
+                                                <Chip key={`dd-${i}`} label={String(val)} size="small" sx={{ background: "#F3F4F6" }} />
+                                            ))
+                                        ) : (
+                                            <Chip label={String(p.dropdownValue || (p.dropdown && String(p.dropdown)))} size="small" sx={{ background: "#F3F4F6" }} />
+                                        )}
+                                    </Box>
                                 )}
                             </Box>
                         ))}
