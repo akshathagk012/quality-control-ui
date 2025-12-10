@@ -276,15 +276,6 @@ const EquipmentPage = () => {
                   <Box sx={{ display: "flex", gap: 1 }}>
                     {/* VIEW BUTTON - Disabled when inactive */}
                     <IconButton
-                      onClick={() =>
-                        !isInactive &&
-                        navigate("/configuration/equipment/view", {
-                          state: {
-                            equipmentName: item.equipment_name,
-                            department: item.department?.name,
-                          },
-                        })
-                      }
                       disabled={isInactive}
                       sx={{
                         width: 32,
